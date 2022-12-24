@@ -18,7 +18,7 @@ provider "aws" {
 }
 
 module "confirmation_function" {
-  source            = "../terraform/lambda_function"
+  source            = "git::https://github.com/pubclub/pubclub_infrastructure.git//tf/modules/lambda_function"
   function_filename = "../builds/confirmation.zip"
   function_name     = "dynamo-confirm-user"
   environment_variables = {
