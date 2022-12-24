@@ -3,20 +3,20 @@ package main
 import (
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
-	"github.com/stretchr/testify/assert"
 	dynamock "github.com/gusaul/go-dynamock"
+	"github.com/stretchr/testify/assert"
 )
 
 var mock *dynamock.DynaMock
 
 var testUser = User{
-	UserId:     "1234",
+	UserId:   "1234",
 	Username: "test-username",
-	Name:       "name",
-	Email:      "test-email@domain.com",
+	Name:     "name",
+	Email:    "test-email@domain.com",
 }
 
 func TestParseUserFromEvent(t *testing.T) {
@@ -28,19 +28,19 @@ func TestParseUserFromEvent(t *testing.T) {
 	request := events.CognitoEventUserPoolsPostConfirmationRequest{
 		UserAttributes: map[string]string{
 			"username": testUser.Username,
-			"name": testUser.Name,
-			"email": testUser.Email,
+			"name":     testUser.Name,
+			"email":    testUser.Email,
 		},
 	}
 
 	event := events.CognitoEventUserPoolsPostConfirmation{
 		CognitoEventUserPoolsHeader: header,
-		Request: request,
-	}	
+		Request:                     request,
+	}
 
 	returnUser, _ := parseUserFromEvent(event)
 
-	assert.Equal(t, testUser, *returnUser) 
+	assert.Equal(t, testUser, *returnUser)
 }
 
 func TestAddRatingToDB(t *testing.T) {
@@ -48,12 +48,11 @@ func TestAddRatingToDB(t *testing.T) {
 	var dyna DynamoAPI
 	dyna.Db, mock = dynamock.New()
 
-
 	putItem := map[string]*dynamodb.AttributeValue{
-		"UserId":     {S: aws.String(testUser.UserId)},
+		"UserId":   {S: aws.String(testUser.UserId)},
 		"Username": {S: aws.String(testUser.Username)},
-		"Name":       {S: aws.String(testUser.Name)},
-		"Email":      {S: aws.String(testUser.Email)},
+		"Name":     {S: aws.String(testUser.Name)},
+		"Email":    {S: aws.String(testUser.Email)},
 	}
 
 	mock.ExpectPutItem().ToTable(TableName).WithItems(putItem)
