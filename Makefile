@@ -1,6 +1,7 @@
 REGION ?= eu-west-2
 BUCKET ?= pubclub-artifacts
 SERVICE ?= confirmation
+VERSION ?= 1.0.0
 
 .PHONY: bucket
 bucket:
@@ -16,5 +17,5 @@ build:
 	zip ../../builds/$(SERVICE).zip main
 
 .PHONY: deploy
-deploy:
-	pass
+deploy: bucket build
+	@aws s3 cp builds/$(SERVICE).zip s3://$(BUCKET)/$(SERVICE)/v$(VERSION)/main.zip
